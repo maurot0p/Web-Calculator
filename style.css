@@ -59,7 +59,8 @@
     direction: ltr;
 }
 #result{
-    max-width: 300px;
+    box-sizing:border-box;
+    max-width: 280px;
     max-height: 50px;
     margin-right: 10px;
     font-size: 40px;

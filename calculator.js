@@ -42,12 +42,14 @@ function operate(operator, x,y){
 function roundToTwo(num) {    
     return +(Math.round(num + "e+2")  + "e-2");
 }
-var counter2=0;
 var pointcounter=0;
+var counter2=0;
+var negativecounter=0;
 function populate(x){
     const populate=document.querySelector("#populate");
     const result=document.querySelector("#result");
     const text=document.createTextNode(x);
+    const errormessage=document.createTextNode("Error");
     var operationResult=0;
     var counter=0;
     var value="";
@@ -63,15 +65,28 @@ function populate(x){
         if(x=="/"){
             populate.appendChild(document.createTextNode("\u00f7"));
             pointcounter=0;
-
+            negativecounter++;
         }
         else if(x=="x"){
             populate.appendChild(document.createTextNode("\u00d7"));
             pointcounter=0;
-
+            negativecounter++;
+        }
+        else if(x=="+"){
+            populate.appendChild(document.createTextNode("+"));
+            pointcounter=0;
+            negativecounter++;
+        }
+        else if(x=="^"){
+            populate.appendChild(document.createTextNode("^"));
+            pointcounter=0;
+            negativecounter++;
         }
         else{
             if(x=="." && pointcounter>0) {
+
+            }
+            if(x=="-" && negativecounter>0){
 
             }
             else{
@@ -91,6 +106,7 @@ function populate(x){
         populate.removeChild(populate.lastChild);
     }
     else if(x=="="){
+    negativecounter=0;
         for(var child=populate.firstChild; child!==null; child=child.nextSibling) {
             if (isNaN(child.nodeValue)==false || child.nodeValue=='.'){
                 value+=child.nodeValue;
@@ -100,28 +116,29 @@ function populate(x){
                 for(var child2=child.nextSibling;child2!=null; child2=child2.nextSibling){
                     value2+=child2.nodeValue;
                 }
-                operationResult=operate(child.nodeValue,parseFloat(value),parseFloat(value2));  
+                    operationResult=operate(child.nodeValue,parseFloat(value),parseFloat(value2));  
+                         
             }
             else if((child.nodeValue=='+' || child.nodeValue=='\u00f7' || child.nodeValue=='\u00d7' || child.nodeValue=='-' || child.nodeValue=='%' || child.nodeValue=='^') && counter!=0){
-                operationResult=operate(child.nodeValue,operationResult,parseFloat(child.nextSibling.nodeValue,10));
+                    operationResult=operate(child.nodeValue,operationResult,parseFloat(child.nextSibling.nodeValue,10));
+               
             }
         }
-        if(counter2==0){
-            if(isNaN(operationResult)==true) result.appendChild(document.createTextNode("Error"));
-            else{
-                result.appendChild(document.createTextNode(operationResult));
-                counter2++;
-            }
+        if(result.hasChildNodes()==true){
+            result.removeChild(result.lastChild);
         }
-        else if(counter2!=0){
-            if(isNaN(operationResult)==true) result.appendChild(document.createTextNode("Error"));
-            else{
-                result.removeChild(result.lastChild);
-                result.appendChild(document.createTextNode(operationResult));
-            }
+        if(isNaN(operationResult)==true){
+            result.appendChild(errormessage);
         }
+        else{
+            result.appendChild(document.createTextNode(operationResult));
+        }
+        
     }
-}
+} 
+            
+        
+
 document.addEventListener('keydown', function(event) {
     const key = event.key; // const {key} = event; ES6+
     if (key === "Backspace" || key === "Delete") populate("delete");
